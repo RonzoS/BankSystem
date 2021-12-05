@@ -21,8 +21,8 @@ public class ATMFrame extends JFrame implements ActionListener {
     int amount;
     BigDecimal amountBefore;
     BigDecimal amountAfter;
-    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
+    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
     JLabel atmLabel = new JLabel();
     JLabel welcomeLabel = new JLabel();

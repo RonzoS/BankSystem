@@ -135,4 +135,52 @@ public class UserCRUD {
         }
     }
 
+    public boolean checkUserByEmail(String email){
+        Transaction transaction = null;
+        Session session = null;
+        List results = null;
+        User user = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            String hql = "From User WHERE email = '" + email + "'";
+            Query query = session.createQuery(hql);
+            results = query.list();
+            if (results.size() > 0) user = (User) results.get(0);
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        if(user == null)
+            return false;
+        else
+            return true;
+    }
+
+    public boolean checkUserByNumber(int number){
+        Transaction transaction = null;
+        Session session = null;
+        List results = null;
+        User user = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            String hql = "From User WHERE phone = " + number;
+            Query query = session.createQuery(hql);
+            results = query.list();
+            if (results.size() > 0) user = (User) results.get(0);
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        if(user == null)
+            return false;
+        else
+            return true;
+    }
+
 }

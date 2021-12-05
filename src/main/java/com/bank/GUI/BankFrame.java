@@ -21,10 +21,10 @@ public class BankFrame extends JFrame implements ActionListener {
 
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-
     List<Transferlog> transferlogs = new ArrayList<>();
 
     JTable transferlogTable = new JTable();
+    JButton logoutButton = new JButton();
 
     public BankFrame(Account account){
 
@@ -68,13 +68,18 @@ public class BankFrame extends JFrame implements ActionListener {
             transferlogModel.addRow(rowData);
         }
 
+        logoutButton.setText("Logout");
+        logoutButton.addActionListener(this);
         transferlogTable.setModel(transferlogModel);
         transferlogTable.getColumnModel().getColumn(1).setPreferredWidth(200);
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         JScrollPane pane = new JScrollPane(transferlogTable);
         panel.add(pane, BorderLayout.CENTER);
+        panel.add(logoutButton, BorderLayout.SOUTH);
         this.setContentPane(panel);
+
+
 
 
 
@@ -83,6 +88,10 @@ public class BankFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource()==logoutButton){
+            LoginFrame loginFrame = new LoginFrame();
+            this.dispose();
+        }
 
     }
 }

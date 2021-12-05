@@ -8,7 +8,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -22,7 +21,6 @@ public class Main {
 
         /*
 
-        System.out.print("Test aplikacji\n");
         BigDecimal PLN;
         BigDecimal minus = new BigDecimal("0.5555");
         PLN = new BigDecimal("10.00");
@@ -71,11 +69,11 @@ public class Main {
         //Transferlog t2 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Transferlog t3 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Account account = new Account();
-        AccountCRUD accountCRUD = new AccountCRUD();
+        //AccountCRUD accountCRUD = new AccountCRUD();
         //account = accountCRUD.getAccountByLoginAndPassword("test", "test");
         //System.out.println(account);
-        CardCRUD cardCRUD = new CardCRUD();
-        UserCRUD userCRUD = new UserCRUD();
+        //CardCRUD cardCRUD = new CardCRUD();
+        //UserCRUD userCRUD = new UserCRUD();
         //TransferlogCRUD transferlogCRUD = new TransferlogCRUD();
         //transferlogCRUD.saveTransferlog(t1, 1);
         //transferlogCRUD.saveTransferlog(t2, 1);
@@ -105,7 +103,5 @@ public class Main {
         //accountCRUD.deleteAccount(7);
         //transferlogCRUD.deleteTransferlog(1);
         LoginFrame loginFrame = new LoginFrame();
-
-
     }
 }
