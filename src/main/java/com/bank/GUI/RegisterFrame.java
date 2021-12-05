@@ -24,7 +24,6 @@ public class RegisterFrame extends JFrame implements ActionListener {
 
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-
     String[] dayStrings = new String[30];
     String[] monthString = new String[11];
     String[] yearString = new String[100];
@@ -100,7 +99,7 @@ public class RegisterFrame extends JFrame implements ActionListener {
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
-                if(accountCRUD.getAccountByLogin(loginField.getText())) {
+                if(accountCRUD.checkAccountByLogin(loginField.getText())) {
                     loginLabelError.setText("User already exist");
                     loginLabelError.setForeground(Color.RED);
                     checkValid();
@@ -325,7 +324,9 @@ public class RegisterFrame extends JFrame implements ActionListener {
     private void checkValid(){
         if(pinField.getDocument().getLength() < 4 ||
                 passwordField.getDocument().getLength() <= 5 ||
-                accountCRUD.getAccountByLogin(loginField.getText()) ||
+                accountCRUD.checkAccountByLogin(loginField.getText()) ||
+                userCRUD.checkUserByEmail(emailField.getText()) ||
+                userCRUD.checkUserByNumber(Integer.parseInt(phoneField.getText())) ||
                 nameField.getDocument().getLength() < 3 ||
                 surnameField.getDocument().getLength() < 3 ||
                 phoneField.getDocument().getLength() != 9 ||

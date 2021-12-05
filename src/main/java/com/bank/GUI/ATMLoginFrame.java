@@ -60,14 +60,16 @@ public class ATMLoginFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            int cardNumber = Integer.parseInt(cardNumberField.getText());
-            int pin = Integer.parseInt(pinField.getText());
+            int cardNumber = intCheck(cardNumberField.getText());
+            int pin = intCheck(pinField.getText());
             Card card = new Card();
             CardCRUD cardCRUD = new CardCRUD();
             Account account = new Account();
             AccountCRUD accountCRUD = new AccountCRUD();
             card = cardCRUD.getCardByLoginAndPin(cardNumber, pin);
-            if(card == null){
+            if(cardNumber == 0 || pin == 0)
+                JOptionPane.showMessageDialog(this, "Card number and PIN should be integer");
+            else if(card == null){
                 cardNumberField.setText("");
                 pinField.setText("");
                 JOptionPane.showMessageDialog(this, "Wrong Card Number or Pin");
@@ -84,4 +86,18 @@ public class ATMLoginFrame extends JFrame implements ActionListener {
 
         }
     }
+
+    private int intCheck(String stringValue){
+        int value;
+        try{
+            value = Integer.parseInt(stringValue);
+            return value;
+        }
+        catch (NumberFormatException e){
+            cardNumberField.setText("");
+            pinField.setText("");
+        }
+        return 0;
+    }
+
 }

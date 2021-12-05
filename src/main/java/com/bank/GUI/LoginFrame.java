@@ -36,7 +36,6 @@ public class LoginFrame extends JFrame implements ActionListener {
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
         this.setVisible(true);
 
-
         loginLabel.setText("Login:");
         loginLabel.setBounds(60, 30, 100, 50);
         this.add(loginLabel);
@@ -51,7 +50,7 @@ public class LoginFrame extends JFrame implements ActionListener {
         passwordField.setBounds(140, 95, 180,20);
         this.add(passwordField);
 
-        loginButton.setText("Login!");
+        loginButton.setText("Login");
         loginButton.setBounds(150, 160, 100, 20);
         loginButton.addActionListener(this);
         this.add(loginButton);

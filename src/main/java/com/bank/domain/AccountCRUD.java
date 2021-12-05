@@ -89,7 +89,7 @@ public class AccountCRUD {
         return account;
     }
 
-    public boolean getAccountByLogin(String login){
+    public boolean checkAccountByLogin(String login){
         Transaction transaction = null;
         Session session = null;
         List results = null;
