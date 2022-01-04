@@ -1,5 +1,6 @@
 package com.bank;
 
+import com.bank.GUI.BankFrame;
 import com.bank.GUI.LoginFrame;
 import com.bank.domain.*;
 import com.bank.service.NumberGenerator;
@@ -68,8 +69,9 @@ public class Main {
         //Transferlog t1 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Transferlog t2 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Transferlog t3 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
-        //Account account = new Account();
-        //AccountCRUD accountCRUD = new AccountCRUD();
+        Account account = new Account();
+        AccountCRUD accountCRUD = new AccountCRUD();
+        account = accountCRUD.getAccount(6);
         //account = accountCRUD.getAccountByLoginAndPassword("test", "test");
         //System.out.println(account);
         //CardCRUD cardCRUD = new CardCRUD();
@@ -102,6 +104,7 @@ public class Main {
 
         //accountCRUD.deleteAccount(7);
         //transferlogCRUD.deleteTransferlog(1);
-        LoginFrame loginFrame = new LoginFrame();
+        //LoginFrame loginFrame = new LoginFrame();
+        BankFrame bankFrame = new BankFrame(account);
     }
 }
