@@ -163,11 +163,11 @@ public class BankFrame extends JFrame implements ActionListener {
         this.add(showBalanceLabel);
 
         amountLabel.setText("Amount");
-        amountLabel.setBounds(365, 105, 100, 20);
+        amountLabel.setBounds(365, 105, 80, 20);
         this.add(amountLabel);
 
         otherAccountLabel.setText("Account");
-        otherAccountLabel.setBounds(365, 155, 100, 20);
+        otherAccountLabel.setBounds(365, 155, 80, 20);
         this.add(otherAccountLabel);
 
         amountField.setBounds(320, 130, 140, 20);
@@ -244,6 +244,15 @@ public class BankFrame extends JFrame implements ActionListener {
                 showPin=false;
             }
         }
+        else if(e.getSource()==changePasswordButton) {
+            ChangeFrame changeFrame = new ChangeFrame(account, 0);
+            this.dispose();
+        }
+        else if(e.getSource()==changePinButton) {
+            ChangeFrame changeFrame = new ChangeFrame(account, 1);
+            this.dispose();
+        }
+
 
     }
 

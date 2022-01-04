@@ -180,6 +180,26 @@ public class AccountCRUD {
         }
     }
 
+    public void updateAccountPassword(int id, String password){
+        Transaction transaction = null;
+        Session session = null;
+        Account account = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            account = session.get(Account.class, id);
+            account.setPassword(password);
+            session.update(account);
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            if(transaction != null)
+                transaction.rollback();
+        } finally {
+            session.close();
+        }
+    }
+
     public void deleteAccount(int id){
         Transaction transaction = null;
         Session session = null;

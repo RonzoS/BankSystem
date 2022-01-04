@@ -15,6 +15,8 @@ import java.time.LocalDate;
 
 public class RegisterFrame extends JFrame implements ActionListener {
 
+    //Class needs remake
+
     AccountCRUD accountCRUD = new AccountCRUD();
     CardCRUD cardCRUD = new CardCRUD();
     UserCRUD userCRUD = new UserCRUD();

@@ -156,6 +156,26 @@ public class CardCRUD {
         }
     }
 
+    public void updateCardPin(int id, int pin){
+        Transaction transaction = null;
+        Session session = null;
+        Card card = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            card = session.get(Card.class, id);
+            card.setPin(pin);
+            session.update(card);
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+            if(transaction != null)
+                transaction.rollback();
+        } finally {
+            session.close();
+        }
+    }
+
     public void deleteCard(int id){
         Transaction transaction = null;
         Session session = null;
