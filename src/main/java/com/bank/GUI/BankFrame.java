@@ -1,6 +1,7 @@
 package com.bank.GUI;
 
 import com.bank.domain.*;
+import com.bank.service.ExportToPDF;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -26,6 +27,8 @@ public class BankFrame extends JFrame implements ActionListener {
     AccountCRUD accountCRUD = new AccountCRUD();
     TransferlogCRUD transferlogCRUD = new TransferlogCRUD();
     CardCRUD cardCRUD = new CardCRUD();
+
+    ExportToPDF exportToPDF = new ExportToPDF();
 
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -56,6 +59,7 @@ public class BankFrame extends JFrame implements ActionListener {
     JButton transferButton = new JButton();
     JButton changePasswordButton = new JButton();
     JButton changePinButton = new JButton();
+    JButton exportButton = new JButton();
 
     public BankFrame(Account account){
 
@@ -97,6 +101,8 @@ public class BankFrame extends JFrame implements ActionListener {
                         return BigDecimal.class;
                     case 5:
                         return String.class;
+                    case 6:
+                        return Integer.class;
                     default:
                         return String.class;
                 }
@@ -105,7 +111,7 @@ public class BankFrame extends JFrame implements ActionListener {
         };
         transferlogModel.setColumnIdentifiers(createRows());
 
-        for(int i = 0; i < transferlogs.size(); i++){
+        for(int i = transferlogs.size() - 1; i >=0 ; i--){
             transferlog = transferlogs.get(i);
             transferlogModel.addRow(addTransferlogRow(transferlog));
         }
@@ -210,14 +216,21 @@ public class BankFrame extends JFrame implements ActionListener {
         changePinButton.setBounds(580, 130, 140, 20);
         this.add(changePinButton);
 
+        exportButton.setText("Export to PDF");
+        exportButton.addActionListener(this);
+        exportButton.setBounds(580, 170, 140, 20);
+        this.add(exportButton);
+
         logoutButton.setText("Logout");
         logoutButton.addActionListener(this);
-        logoutButton.setBounds(10,10,100, 20);
+        logoutButton.setBounds(580,210,140, 20);
         this.add(logoutButton);
 
         transferlogTable.setModel(transferlogModel);
         transferlogTable.setAutoCreateRowSorter(true);
         transferlogTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        transferlogTable.getColumnModel().getColumn(6).setMinWidth(0);
+        transferlogTable.getColumnModel().getColumn(6).setMaxWidth(0);
         JScrollPane pane = new JScrollPane(transferlogTable);
         pane.setBounds(30,300,720,240);
         this.add(pane);
@@ -252,23 +265,37 @@ public class BankFrame extends JFrame implements ActionListener {
             ChangeFrame changeFrame = new ChangeFrame(account, 1);
             this.dispose();
         }
+        else if(e.getSource()==exportButton){
+            if(transferlogTable.getSelectionModel().isSelectionEmpty())
+                JOptionPane.showMessageDialog(this, "No row selected");
+            else{
+                int id = Integer.parseInt(transferlogTable.getValueAt(transferlogTable.getSelectedRow(), 6).toString());
+                try {
+                    exportToPDF.generatePDF(account, transferlogCRUD.getTransferlog(id));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                JOptionPane.showMessageDialog(this, "Transfer exported");
+            }
+        }
 
 
     }
 
     private Object[] createRows(){
-        Object[] columnsName = new Object[6];
+        Object[] columnsName = new Object[7];
         columnsName[0] = "Date";
         columnsName[1] = "Description";
         columnsName[2] = "Amount";
         columnsName[3] = "Amount Before";
         columnsName[4] = "Amount After";
         columnsName[5] = "Account Number";
+        columnsName[6] = "ID";
         return  columnsName;
     }
 
     private Object[] addTransferlogRow(Transferlog transferlog){
-        Object[] rowData = new Object[6];
+        Object[] rowData = new Object[7];
         rowData[0] = transferlog.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         rowData[1] = transferlog.getDescription();
         rowData[2] = transferlog.getValue();
@@ -278,6 +305,7 @@ public class BankFrame extends JFrame implements ActionListener {
             rowData[5] = "ATM";
         else
             rowData[5] = String.valueOf(transferlog.getOtherAccount());
+        rowData[6] = transferlog.getId();
         return rowData;
     }
 

@@ -3,6 +3,7 @@ package com.bank;
 import com.bank.GUI.BankFrame;
 import com.bank.GUI.LoginFrame;
 import com.bank.domain.*;
+import com.bank.service.ExportToPDF;
 import com.bank.service.NumberGenerator;
 import com.bank.util.HibernateUtil;
 import org.hibernate.Session;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /*
 
@@ -66,12 +67,14 @@ public class Main {
         //User u1 = new User(555666777, "Jan", "Kowalski", "JanKowalaski@gmail.com", LocalDate.parse("1997-08-16"));
         //Card c1 = new Card(1134252, 9331);
         //Card c2 = new Card(11342525, 9431);
-        //Transferlog t1 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
+        //Transferlog t1 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 0);
         //Transferlog t2 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Transferlog t3 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         Account account = new Account();
         AccountCRUD accountCRUD = new AccountCRUD();
         account = accountCRUD.getAccount(6);
+        //ExportToPDF exportToPDF = new ExportToPDF();
+        //exportToPDF.generatePDF(account, t1);
         //account = accountCRUD.getAccountByLoginAndPassword("test", "test");
         //System.out.println(account);
         //CardCRUD cardCRUD = new CardCRUD();
