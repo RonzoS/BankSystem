@@ -137,6 +137,30 @@ public class AccountCRUD {
             return true;
     }
 
+    public Account getAccountByNumberCorrect(int accountNumber){
+        Transaction transaction = null;
+        Session session = null;
+        List results = null;
+        Account account = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            String hql = "From Account WHERE accountNumber = " + accountNumber;
+            Query query = session.createQuery(hql);
+            results = query.list();
+            if (results.size() > 0) account = (Account) results.get(0);
+            transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        if(account == null)
+            return null;
+        else
+            return account;
+    }
+
     public void updateAccount(int id, int accountNumber, BigDecimal balance, String login, String password){
         Transaction transaction = null;
         Session session = null;

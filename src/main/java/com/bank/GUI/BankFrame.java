@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,11 @@ public class BankFrame extends JFrame implements ActionListener {
     JLabel showBalanceLabel = new JLabel();
     JLabel amountLabel = new JLabel();
     JLabel otherAccountLabel = new JLabel();
+    JLabel descriptionLabel = new JLabel();
 
     JTextField amountField = new JTextField();
     JTextField otherAccountField = new JTextField();
+    JTextField descriptionField = new JTextField();
 
     JTable transferlogTable = new JTable();
 
@@ -60,6 +63,38 @@ public class BankFrame extends JFrame implements ActionListener {
     JButton changePasswordButton = new JButton();
     JButton changePinButton = new JButton();
     JButton exportButton = new JButton();
+
+    DefaultTableModel transferlogModel = new DefaultTableModel(){
+
+        //Making all cells not editable
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+
+        @Override
+        public Class getColumnClass(int column) {
+            switch (column) {
+                case 0:
+                    return String.class;
+                case 1:
+                    return String.class;
+                case 2:
+                    return BigDecimal.class;
+                case 3:
+                    return BigDecimal.class;
+                case 4:
+                    return BigDecimal.class;
+                case 5:
+                    return String.class;
+                case 6:
+                    return Integer.class;
+                default:
+                    return String.class;
+            }
+        }
+
+    };
 
     public BankFrame(Account account){
 
@@ -76,39 +111,7 @@ public class BankFrame extends JFrame implements ActionListener {
         this.setLayout(null);
         this.setSize(800, 600);
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
-        this.setVisible(true);
 
-        DefaultTableModel transferlogModel = new DefaultTableModel(){
-
-            //Making all cells not editable
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-
-            @Override
-            public Class getColumnClass(int column) {
-                switch (column) {
-                    case 0:
-                        return String.class;
-                    case 1:
-                        return String.class;
-                    case 2:
-                        return BigDecimal.class;
-                    case 3:
-                        return BigDecimal.class;
-                    case 4:
-                        return BigDecimal.class;
-                    case 5:
-                        return String.class;
-                    case 6:
-                        return Integer.class;
-                    default:
-                        return String.class;
-                }
-            }
-
-        };
         transferlogModel.setColumnIdentifiers(createRows());
 
         for(int i = transferlogs.size() - 1; i >=0 ; i--){
@@ -176,6 +179,10 @@ public class BankFrame extends JFrame implements ActionListener {
         otherAccountLabel.setBounds(365, 155, 80, 20);
         this.add(otherAccountLabel);
 
+        descriptionLabel.setText("Description");
+        descriptionLabel.setBounds(357, 205, 80, 20);
+        this.add(descriptionLabel);
+
         amountField.setBounds(320, 130, 140, 20);
         this.add(amountField);
 
@@ -194,6 +201,9 @@ public class BankFrame extends JFrame implements ActionListener {
         });
         this.add(otherAccountField);
 
+        descriptionField.setBounds(320, 230, 140, 20);
+        this.add(descriptionField);
+
         showPinButton.setText("\uD83D\uDC41️");
         showPinButton.addActionListener(this);
         showPinButton.setMargin( new Insets(0, 0, 0, 0) );
@@ -203,7 +213,7 @@ public class BankFrame extends JFrame implements ActionListener {
         transferButton.setText("Make a transfer");
         transferButton.addActionListener(this);
         transferButton.setMargin( new Insets(5, 5, 5, 5) );
-        transferButton.setBounds(330, 220, 120, 20);
+        transferButton.setBounds(330, 265, 120, 20);
         this.add(transferButton);
 
         changePasswordButton.setText("Change Password");
@@ -235,10 +245,7 @@ public class BankFrame extends JFrame implements ActionListener {
         pane.setBounds(30,300,720,240);
         this.add(pane);
 
-
-
-
-
+        this.setVisible(true);
     }
 
     @Override
@@ -278,6 +285,20 @@ public class BankFrame extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Transfer exported");
             }
         }
+        else if (e.getSource()==transferButton){
+            if(!accountCRUD.getAccountByNumber(Integer.parseInt(otherAccountField.getText()))){
+                otherAccountField.setText("");
+                JOptionPane.showMessageDialog(this, "Wrong account number");
+            }
+            else {
+                account = makeTransaction(account, Integer.parseInt(otherAccountField.getText()),new BigDecimal(amountField.getText()), descriptionField.getText());
+                showBalanceLabel.setText(String.valueOf(account.getBalance()));
+                amountField.setText("");
+                otherAccountField.setText("");
+                descriptionField.setText("");
+                JOptionPane.showMessageDialog(this, "Transfer completed");
+            }
+        }
 
 
     }
@@ -309,6 +330,26 @@ public class BankFrame extends JFrame implements ActionListener {
         return rowData;
     }
 
+    private Account makeTransaction(Account account, int otherAccountNumber, BigDecimal amount, String description){
+        Account account1 = accountCRUD.getAccountByNumberCorrect(otherAccountNumber);
+        BigDecimal amountBefore = account.getBalance();
+        BigDecimal amountAfter = amountBefore.subtract(amount.setScale(2, RoundingMode.HALF_UP));
+        accountCRUD.updateAccountBalance(account.getId(), amountAfter);
+        account = accountCRUD.getAccount(account.getId());
+        transferlog = new Transferlog(description, amount.setScale(2, RoundingMode.HALF_UP).doubleValue(), amountBefore.doubleValue(),
+                amountAfter.doubleValue(), otherAccountNumber);
+        transferlogCRUD.saveTransferlog(transferlog, account.getId());
+        transferlogModel.insertRow(0, addTransferlogRow(transferlog));
+        transferlogTable.setModel(transferlogModel);
+        amountBefore = account1.getBalance();
+        amountAfter = amountBefore.add(amount.setScale(2, RoundingMode.HALF_UP));
+        accountCRUD.updateAccountBalance(account1.getId(), amountAfter);
+        account1 = accountCRUD.getAccount(account1.getId());
+        transferlog = new Transferlog(description, amount.setScale(2, RoundingMode.HALF_UP).doubleValue(), amountBefore.doubleValue(),
+                amountAfter.doubleValue(), account.getAccountNumber());
+        transferlogCRUD.saveTransferlog(transferlog, account1.getId());
+        return account;
+    }
 
 
 
