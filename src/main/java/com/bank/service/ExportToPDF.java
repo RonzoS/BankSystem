@@ -45,7 +45,7 @@ public class ExportToPDF{
 
     }
 
-    public static void writeLine(PDPageContentStream contentStream, int tx, int ty, PDFont font, int fontSize, String text){
+    private static void writeLine(PDPageContentStream contentStream, int tx, int ty, PDFont font, int fontSize, String text){
         if(font==null)
             font = PDType1Font.HELVETICA;
         try{

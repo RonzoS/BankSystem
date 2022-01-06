@@ -19,8 +19,6 @@ public class ATMFrame extends JFrame implements ActionListener {
     TransferlogCRUD transferlogCRUD = new TransferlogCRUD();
 
     int amount;
-    BigDecimal amountBefore;
-    BigDecimal amountAfter;
 
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
@@ -90,13 +88,7 @@ public class ATMFrame extends JFrame implements ActionListener {
         if(e.getSource()==depositButton){
             amount = intCheck(amountField.getText());
             if(amount>0){
-                amountBefore = account.getBalance();
-                amountAfter = amountBefore.add(BigDecimal.valueOf(amount));
-                accountCRUD.updateAccountBalance(account.getId(), amountAfter);
-                account = accountCRUD.getAccount(account.getId());
-                transferlog = new Transferlog("ATM deposit", Double.parseDouble(amountField.getText()), amountBefore.doubleValue(),
-                        amountAfter.doubleValue(), 0);
-                transferlogCRUD.saveTransferlog(transferlog, account.getId());
+                account = generateTransferlog(account, Double.parseDouble(amountField.getText()), "Deposit");
                 balanceLabel.setText("Balance: " + account.getBalance());
                 amountField.setText("");
                 JOptionPane.showMessageDialog(this, "Successfully deposited");
@@ -113,13 +105,7 @@ public class ATMFrame extends JFrame implements ActionListener {
                 amountField.setText("");
             }
             else if(amount>0){
-                amountBefore = account.getBalance();
-                amountAfter = amountBefore.subtract(BigDecimal.valueOf(amount));
-                accountCRUD.updateAccountBalance(account.getId(), amountAfter);
-                account = accountCRUD.getAccount(account.getId());
-                transferlog = new Transferlog("ATM withdraw", Double.parseDouble(amountField.getText()), amountBefore.doubleValue(),
-                        amountAfter.doubleValue(), 0);
-                transferlogCRUD.saveTransferlog(transferlog, account.getId());
+                account = generateTransferlog(account, Double.parseDouble(amountField.getText()), "Withdraw");
                 balanceLabel.setText("Balance: " + account.getBalance());
                 amountField.setText("");
                 JOptionPane.showMessageDialog(this, "Successfully withdrawn");
@@ -147,5 +133,21 @@ public class ATMFrame extends JFrame implements ActionListener {
             amountField.setText("");
         }
         return 0;
+    }
+
+    private Account generateTransferlog(Account account, double amount, String type){
+        BigDecimal amountBefore = account.getBalance();
+        BigDecimal amountAfter;
+        if(type.equals("Deposit"))
+            amountAfter = amountBefore.add(BigDecimal.valueOf(amount));
+        else
+            amountAfter = amountBefore.subtract(BigDecimal.valueOf(amount));
+        accountCRUD.updateAccountBalance(account.getId(), amountAfter);
+        account = accountCRUD.getAccount(account.getId());
+        transferlog = new Transferlog(type, Double.parseDouble(amountField.getText()), amountBefore.doubleValue(),
+                amountAfter.doubleValue(), 0);
+        transferlogCRUD.saveTransferlog(transferlog, account.getId());
+        balanceLabel.setText("Balance: " + account.getBalance());
+        return account;
     }
 }

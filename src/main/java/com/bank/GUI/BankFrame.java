@@ -290,6 +290,10 @@ public class BankFrame extends JFrame implements ActionListener {
                 otherAccountField.setText("");
                 JOptionPane.showMessageDialog(this, "Wrong account number");
             }
+            else if (new BigDecimal(amountField.getText()).compareTo(account.getBalance()) > 0){
+                amountField.setText("");
+                JOptionPane.showMessageDialog(this, "Not enough money");
+            }
             else {
                 account = makeTransaction(account, Integer.parseInt(otherAccountField.getText()),new BigDecimal(amountField.getText()), descriptionField.getText());
                 showBalanceLabel.setText(String.valueOf(account.getBalance()));
