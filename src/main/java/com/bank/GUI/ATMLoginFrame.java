@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ATMLoginFrame extends JFrame implements ActionListener {
 
@@ -41,9 +43,31 @@ public class ATMLoginFrame extends JFrame implements ActionListener {
         this.add(pinLabel);
 
         cardNumberField.setBounds(140, 45, 180, 20);
+        cardNumberField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if ((c < '0') || (c > '9') && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                }
+                else if(cardNumberField.getDocument().getLength() >= 6)
+                    e.consume();
+            }
+        });
         this.add(cardNumberField);
 
         pinField.setBounds(140, 95, 180, 20);
+        pinField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if ((c < '0') || (c > '9') && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                }
+                else if(pinField.getDocument().getLength() >= 4)
+                    e.consume();
+            }
+        });
         this.add(pinField);
 
         loginButton.setText("Login");

@@ -70,9 +70,9 @@ public class Main {
         //Transferlog t1 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 0);
         //Transferlog t2 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
         //Transferlog t3 = new Transferlog("Przelew do kolegi", 1505450, 1800, 11100, 7);
-        Account account = new Account();
-        AccountCRUD accountCRUD = new AccountCRUD();
-        account = accountCRUD.getAccount(6);
+        //Account account = new Account();
+        //AccountCRUD accountCRUD = new AccountCRUD();
+        //account = accountCRUD.getAccount(6);
         //ExportToPDF exportToPDF = new ExportToPDF();
         //exportToPDF.generatePDF(account, t1);
         //account = accountCRUD.getAccountByLoginAndPassword("test", "test");
@@ -107,7 +107,7 @@ public class Main {
 
         //accountCRUD.deleteAccount(7);
         //transferlogCRUD.deleteTransferlog(1);
-        //LoginFrame loginFrame = new LoginFrame();
-        BankFrame bankFrame = new BankFrame(account);
+        LoginFrame loginFrame = new LoginFrame();
+        //BankFrame bankFrame = new BankFrame(account);
     }
 }

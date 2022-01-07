@@ -159,7 +159,14 @@ public class RegisterFrame extends JFrame implements ActionListener {
         pinField.setBounds(120, 155, 130,20);
         pinField.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if ((c < '0') || (c > '9') && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                } else if (pinField.getDocument().getLength() >= 4)
+                    e.consume();
+            }
+            /*public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 char c = e.getKeyChar();
                 int i = Character.getNumericValue(c);
@@ -185,7 +192,7 @@ public class RegisterFrame extends JFrame implements ActionListener {
                     pinLabelError.setText("four dignits required");
                     pinLabelError.setForeground(Color.GRAY);
                 }
-            }
+            }*/
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
@@ -265,6 +272,15 @@ public class RegisterFrame extends JFrame implements ActionListener {
 
         phoneField.setBounds(490, 205, 130, 20);
         phoneField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if ((c < '0') || (c > '9') && (c != KeyEvent.VK_BACK_SPACE)) {
+                    e.consume();
+                } else if (phoneField.getDocument().getLength() >= 9)
+                    e.consume();
+            }
+
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
