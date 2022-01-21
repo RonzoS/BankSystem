@@ -166,33 +166,6 @@ public class RegisterFrame extends JFrame implements ActionListener {
                 } else if (pinField.getDocument().getLength() >= 4)
                     e.consume();
             }
-            /*public void keyPressed(KeyEvent e) {
-                super.keyPressed(e);
-                char c = e.getKeyChar();
-                int i = Character.getNumericValue(c);
-                if(i==-1) {
-                    pinField.setEditable(true);
-                    pinLabelError.setText("four dignits required");
-                    pinLabelError.setForeground(Color.RED);
-                }
-                else if (pinField.getDocument().getLength() >= 4){
-                    pinField.setEditable(false);
-                    pinField.setBackground(Color.WHITE);
-                    pinLabelError.setText("Only four dignits allowed");
-                    pinLabelError.setForeground(Color.GRAY);
-                }
-                else if (i > 9) {
-                    pinField.setEditable(false);
-                    pinField.setBackground(Color.WHITE);
-                    pinLabelError.setText("Only four dignits allowed");
-                    pinLabelError.setForeground(Color.RED);
-                }
-                else {
-                    pinField.setEditable(true);
-                    pinLabelError.setText("four dignits required");
-                    pinLabelError.setForeground(Color.GRAY);
-                }
-            }*/
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
@@ -341,10 +314,11 @@ public class RegisterFrame extends JFrame implements ActionListener {
 
     private void checkValid(){
         if(pinField.getDocument().getLength() < 4 ||
-                passwordField.getDocument().getLength() <= 5 ||
+                passwordField.getDocument().getLength() < 5 ||
                 accountCRUD.checkAccountByLogin(loginField.getText()) ||
                 userCRUD.checkUserByEmail(emailField.getText()) ||
                 userCRUD.checkUserByNumber(Integer.parseInt(phoneField.getText())) ||
+                loginField.getDocument().getLength() < 5 ||
                 nameField.getDocument().getLength() < 3 ||
                 surnameField.getDocument().getLength() < 3 ||
                 phoneField.getDocument().getLength() != 9 ||
