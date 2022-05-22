@@ -5,6 +5,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,6 +107,33 @@ public class TransferlogCRUD {
             Query query = session.createQuery(hql);
             results = query.list();
             transaction.commit();
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return results;
+    }
+
+    public List searchTransferlogs(Integer accountId, String start, String end, String value){
+        Transaction transaction = null;
+        Session session = null;
+        List results = null;
+        try{
+            session = HibernateUtil.getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            if(value == "*") {
+                String hql = "From Transferlog WHERE account_id = " + accountId + " AND date >= '" + start + "' AND date <= '" + end + "'";
+                Query query = session.createQuery(hql);
+                results = query.list();
+                transaction.commit();
+            }
+            else{
+                String hql = "From Transferlog WHERE account_id = " + accountId + " AND date >= '" + start + "' AND date <= '" + end + "' AND value = " + Double.parseDouble(value);
+                Query query = session.createQuery(hql);
+                results = query.list();
+                transaction.commit();
+            }
         } catch (Exception e){
             e.printStackTrace();
         } finally {

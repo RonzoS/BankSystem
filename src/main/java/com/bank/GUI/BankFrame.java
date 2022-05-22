@@ -12,6 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.List;
 public class BankFrame extends JFrame implements ActionListener {
 
     Boolean showPin = false;
+    String[] dayStrings = new String[30];
+    String[] monthString = new String[11];
+    String[] yearString = new String[30];
 
     User user = new User();
     Account account= new Account();
@@ -34,6 +38,7 @@ public class BankFrame extends JFrame implements ActionListener {
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
     List<Transferlog> transferlogs;
+    List<Transferlog> searchTransferlogs;
 
     JLabel tittleLabel = new JLabel();
     JLabel accountInfoLabel = new JLabel();
@@ -50,10 +55,14 @@ public class BankFrame extends JFrame implements ActionListener {
     JLabel amountLabel = new JLabel();
     JLabel otherAccountLabel = new JLabel();
     JLabel descriptionLabel = new JLabel();
+    JLabel searchValueLabel = new JLabel();
+    JLabel fromLabel = new JLabel("From");
+    JLabel toLabel = new JLabel("To");
 
     JTextField amountField = new JTextField();
     JTextField otherAccountField = new JTextField();
     JTextField descriptionField = new JTextField();
+    JTextField searchField = new JTextField();
 
     JTable transferlogTable = new JTable();
 
@@ -63,6 +72,15 @@ public class BankFrame extends JFrame implements ActionListener {
     JButton changePasswordButton = new JButton();
     JButton changePinButton = new JButton();
     JButton exportButton = new JButton();
+    JButton resetRows = new JButton();
+    JButton searchButton = new JButton();
+
+    JComboBox startDayField = new JComboBox();
+    JComboBox startMonthField = new JComboBox();
+    JComboBox startYearField = new JComboBox();
+    JComboBox endDayField = new JComboBox();
+    JComboBox endMonthField = new JComboBox();
+    JComboBox endYearField = new JComboBox();
 
     DefaultTableModel transferlogModel = new DefaultTableModel(){
 
@@ -98,6 +116,21 @@ public class BankFrame extends JFrame implements ActionListener {
 
     public BankFrame(Account account){
 
+        for(int i = 0; i<=dayStrings.length; i++) {
+            startDayField.addItem(Integer.toString(i + 1));
+            endDayField.addItem(Integer.toString(i + 1));
+        }
+
+        for(int i = 0; i<=monthString.length; i++) {
+            startMonthField.addItem(Integer.toString(i + 1));
+            endMonthField.addItem(Integer.toString(i + 1));
+        }
+
+        for(int i = 0; i<=yearString.length; i++) {
+            startYearField.addItem(Integer.toString(i + 2010));
+            endYearField.addItem(Integer.toString(i + 2010));
+        }
+
         this.account = account;
         transferlogs = transferlogCRUD.getAccountTransferlog(account.getId());
         user = userCRUD.getAccountUser(account.getId());
@@ -109,15 +142,12 @@ public class BankFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLayout(null);
-        this.setSize(800, 600);
+        this.setSize(800, 650);
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 
         transferlogModel.setColumnIdentifiers(createRows());
 
-        for(int i = transferlogs.size() - 1; i >=0 ; i--){
-            transferlog = transferlogs.get(i);
-            transferlogModel.addRow(addTransferlogRow(transferlog));
-        }
+        fillAllRows();
 
         tittleLabel.setText("Welcome "+user.getName()+" to your bank account");
         tittleLabel.setBounds(215, 20, 450, 30);
@@ -236,6 +266,48 @@ public class BankFrame extends JFrame implements ActionListener {
         logoutButton.setBounds(580,210,140, 20);
         this.add(logoutButton);
 
+        fromLabel.setBounds(15, 550, 40, 20);
+        this.add(fromLabel);
+
+        toLabel.setBounds(20, 580, 40, 20);
+        this.add(toLabel);
+
+        startDayField.setBounds(50, 550, 40, 20);
+        this.add(startDayField);
+
+        startMonthField.setBounds(90, 550, 40, 20);
+        this.add(startMonthField);
+
+        startYearField.setBounds(130, 550, 60, 20);
+        this.add(startYearField);
+
+        endDayField.setBounds(50, 580, 40, 20);
+        this.add(endDayField);
+
+        endMonthField.setBounds(90, 580, 40, 20);
+        this.add(endMonthField);
+
+        endYearField.setBounds(130, 580, 60, 20);
+        endYearField.setSelectedIndex(30);
+        this.add(endYearField);
+
+        searchValueLabel.setText("Value");
+        searchValueLabel.setBounds(210, 545, 140, 20);
+        this.add(searchValueLabel);
+
+        searchField.setBounds(210, 575, 140, 20);
+        this.add(searchField);
+
+        searchButton.setText("Search");
+        searchButton.addActionListener(this);
+        searchButton.setBounds(390, 575, 140, 20);
+        this.add(searchButton);
+
+        resetRows.setText("Reset Rows");
+        resetRows.addActionListener(this);
+        resetRows.setBounds(580, 575, 140, 20);
+        this.add(resetRows);
+
         transferlogTable.setModel(transferlogModel);
         transferlogTable.setAutoCreateRowSorter(true);
         transferlogTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -303,6 +375,26 @@ public class BankFrame extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Transfer completed");
             }
         }
+        else if(e.getSource()==resetRows){
+            removeAllRows(transferlogTable);
+            fillAllRows();
+        }
+        else if(e.getSource()==searchButton){
+            removeAllRows(transferlogTable);
+            LocalDate startLocalDate = LocalDate.of(Integer.parseInt(startYearField.getSelectedItem().toString()),
+                    Integer.parseInt(startMonthField.getSelectedItem().toString()),
+                    Integer.parseInt(startDayField.getSelectedItem().toString()));
+            LocalDate endLocalDate = LocalDate.of(Integer.parseInt(endYearField.getSelectedItem().toString()),
+                    Integer.parseInt(endMonthField.getSelectedItem().toString()),
+                    Integer.parseInt(endDayField.getSelectedItem().toString()));
+            String searchValue;
+            if(searchField.getText().equals(""))
+                searchValue = "*";
+            else
+                searchValue = searchField.getText();
+            fillAllSearchRows(startLocalDate.toString(), endLocalDate.toString(), searchValue);
+            searchField.setText("");
+        }
 
 
     }
@@ -353,6 +445,30 @@ public class BankFrame extends JFrame implements ActionListener {
                 amountAfter.doubleValue(), account.getAccountNumber());
         transferlogCRUD.saveTransferlog(transferlog, account1.getId());
         return account;
+    }
+
+    private void removeAllRows(JTable table){
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int tableSize = table.getRowCount();
+        for (int i = tableSize - 1; i >= 0; i--) {
+            model.removeRow(i);
+        }
+    }
+
+    private void fillAllRows(){
+        transferlogs = transferlogCRUD.getAccountTransferlog(account.getId());
+        for(int i = transferlogs.size() - 1; i >=0 ; i--){
+            transferlog = transferlogs.get(i);
+            transferlogModel.addRow(addTransferlogRow(transferlog));
+        }
+    }
+
+    private void fillAllSearchRows(String start, String end, String value){
+        searchTransferlogs = transferlogCRUD.searchTransferlogs(account.getId(), start, end, value);
+        for(int i = searchTransferlogs.size() - 1; i >=0 ; i--){
+            transferlog = searchTransferlogs.get(i);
+            transferlogModel.addRow(addTransferlogRow(transferlog));
+        }
     }
 
 
